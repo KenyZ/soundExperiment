@@ -1,7 +1,4 @@
-class Audio {
-
-  constructor(url) {
-
+function Audio (url) {
     window.AudioContext=window.AudioContext||window.webkitAudioContext||window.mozAudioContext;
 
     this.audioCtx = new AudioContext();
@@ -11,11 +8,10 @@ class Audio {
     this.DELTA_TIME = 0;
     this.LAST_TIME = Date.now();
     this.url = url;
+}
 
-  }
-
-  loadSound() {
-
+Audio.prototype = {
+  loadSound : function () {
     this.request = new XMLHttpRequest();
     this.request.open('GET', this.url, true);
     this.request.responseType = 'arraybuffer';
@@ -40,16 +36,17 @@ class Audio {
       }.bind(this));
     }.bind(this);
     this.request.send();
-
-  }
-
-  getFrequency() {
-
+  },
+  getFrequency : function () {
     this.DELTA_TIME = Date.now() - this.LAST_TIME;
     this.LAST_TIME = Date.now();
 
     this.analyser.getByteFrequencyData(this.frequencyData);
 
     return this.frequencyData;
+  },
+
+  pause : function() {
+    // TODO: pause function
   }
 }

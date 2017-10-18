@@ -2,8 +2,13 @@ let   canvas = document.getElementById('canvas'),
       audio,
       ctx,
       simplex = new SimplexNoise(),
-      points = [];
+      paintdrops = [];
 
+    const color = [
+      '#fff680',
+      '#ed5e9a',
+      '#7248de'
+    ]
 /**
  * onResize
  * - Triggered when window is resized
@@ -30,15 +35,23 @@ function addListeners() {
 function updateFrame() {
 
     requestAnimationFrame( updateFrame );
-    ctx.clearRect(0,0, canvasWidth, canvasHeight);
+
+
+    // ctx.clearRect(0,0, canvasWidth, canvasHeight);
+          ctx.fillStyle = 'rgba(13, 29, 51, 0.2)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     let cumul = 0;
 
-    for (let i = 0; i < points.length; i++) {
+    // TODO: each paintdrop worries about one specific range of frequency
 
-        let percentIdx = i / points.length;
-        let frequencyIdx = Math.floor(1024 * percentIdx);
+    // TODO: resize
 
+    for (let i = 0; i < paintdrops.length; i++) {
+
+        let paintdrop     = paintdrops[i],
+          percentIdx    = i / paintdrop.numberPoints;
+          frequencyIdx  = Math.floor(1024 * percentIdx);
 
         let frequencyData = audio.getFrequency();
 
@@ -46,79 +59,37 @@ function updateFrame() {
 
         let variation = cumul / 255;
 
-        let p = points[i];
+        paintdrop.update(variation);
+        paintdrop.render();
 
-        p.update(variation);
-        p.render();
+
 
     }
-
-    drawLines();
-}
-
-function drawLines () {
-  ctx.beginPath();
-  ctx.save();
-  ctx.strokeStyle='#fff';
-  ctx.fillStyle = '#fff';
-  ctx.moveTo(0, 0);
-
-    for (let i = 0; i < points.length; i++) {
-      let futurePoint = points[i+1];
-
-      if (i == points.length-1) {
-        futurePoint = {
-          x : points[points.length-1],
-          y : 0
-        }
-      }
-
-      ctx.lineTo(futurePoint.x, futurePoint.y);
-    }
-    ctx.stroke();
-
-    ctx.lineTo(canvasWidth, 0);
-
-    ctx.fill();
-    ctx.restore();
-    ctx.closePath();
 }
 
 function init() {
 
     onResize();
-    // addListeners();
-    audio = new Audio('sounds/sound2.mp3');
+
+    //Creates a new audio object with an url
+    audio = new Audio('sounds/sound3.mp3');
     audio.loadSound();
 
     ctx = canvas.getContext('2d');
 
-    const numberPoints = canvasWidth / 8;
-    const gap = Math.floor(canvasWidth / numberPoints);
-
-    let base = {
-      x : -gap,
-      y : 400
-    }
-
-    let pos = 0;
-
+    let height = 400;
     let angle = 0;
 
-    for(let i = 0; i <= numberPoints + 2; i++) {
-      angle += 0.020;
-
-      let point = new Point(ctx, base, pos, angle, 'pink', true);
-
-      pos += gap;
-      points.push(point);
+    //Instances 3 paintdrops
+    for (let i = 0; i < 3; i++){
+      let paintdrop = new Paintdrop(height, angle, color[i]);
+      paintdrop.render();
+      paintdrops.push(paintdrop);
+      height -= 100;
+      angle   += Math.random() * (0 - 0.05);
     }
 
-    drawLines();
 }
 
-
-
 init();
-
 updateFrame();

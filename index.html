@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Sound Experiment</title>
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
     <style media="screen">
 
       html, body {
@@ -16,21 +17,40 @@
 
       canvas {
         background-color: #0d1d33;
+
+      }
+
+
+      .commands {
+        width : 100vw;
+        height: 5vh;
+        background-color: rgba(74, 23, 168, 0.5);
+        position: absolute;
+        bottom: 0;
+
       }
 
       button {
-        position: absolute;
-        bottom: 0;
+        border: none;
+        outline: 0;
+        background: #5a06b8;
+        color: #fff;
+        font-size: 1rem;
+        font-family: 'Work Sans';
+        cursor: pointer;
       }
-      
+
     </style>
   </head>
   <body>
-    <button type="button" name="button">Pause</button>
+    <div class="commands">
+      <button id="pause" type="button" name="button">||</button>
+    </div>
     <canvas id="canvas" width="300" height="300"></canvas>
     <script src="scripts/audio.js"></script>
     <!-- <script src="scripts/sound.js"></script> -->
     <script src="scripts/simplex-noise.js"></script>
+    <script src="scripts/paintdrop.js"></script>
     <script src="scripts/point.js"></script>
     <script src="scripts/main.js"></script>
   </body>

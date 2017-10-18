@@ -1,39 +1,31 @@
-class Point {
+function Point (coords, angle, height) {
 
-  constructor(ctx, base, pos, angle, shade) {
-      this.base = base;
-      this.angle = angle;
-      this.pos =  pos ;
-      this.amplitude = 300;
-      this.time = 0;
-      this.noise = simplex.noise2D(Math.cos(this.angle), Math.sin(this.angle)) * this.amplitude;
+    this.coords       = coords; //Y & x coordinates where to start
+    this.angle        = angle;
+    this.height       = height;
+    this.amplitude    = this.height / 3;
+    this.time         = 0;
+    this.noise        = simplex.noise2D(Math.cos(this.angle), Math.sin(this.angle)) * this.amplitude;
 
-      this.x = this.base.x + this.pos,
-      this.y = 700 + this.noise,
-      this.ctx = ctx;
-      this.firstY = this.y;
-  }
+    this.x            = this.coords.x,
+    this.y            = this.coords.y + this.height + this.noise;
+    this.firstY       = this.y;
 
-  render() {
-      this.ctx.beginPath();
-      this.ctx.save();
-      this.ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
-      this.ctx.restore();
-      this.ctx.closePath();
-  }
+}
 
-  update(variation) {
+Point.prototype = {
+    render : function() {
+        ctx.beginPath();
+        ctx.save();
+        ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+        ctx.restore();
+        ctx.closePath();
+    },
 
-      this.variation = variation;
+    update : function(variation) {
 
-      if (this.y > 400) {
-          this.noise = simplex.noise2D(Math.cos(this.angle), Math.sin(this.angle)) * (this.variation + 40);
-          this.y = this.firstY  + this.noise  + 100;
-      } else  {
-          this.noise = simplex.noise2D(Math.cos(this.angle), Math.sin(this.angle)) * (this.variation + 200);
-          this.y = this.firstY  + this.noise;
-      }
-
-
-  }
+        this.variation  = variation;
+        this.noise      = simplex.noise2D(Math.cos(this.angle), Math.sin(this.angle)) * (this.variation);
+        this.y          = this.firstY +  (this.noise * this.amplitude * 1.5);
+    }
 }
