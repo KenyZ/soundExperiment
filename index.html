@@ -4,18 +4,34 @@
     <meta charset="utf-8">
     <title>Sound Experiment</title>
     <style media="screen">
+
       html, body {
         margin: 0;
         padding: 0;
         height: 100vh;
         width: 100vw;
+        overflow: hidden;
+        position: relative;
       }
+
       canvas {
-        background-color: #3c3166;
+        background-color: #0d1d33;
       }
+
+      button {
+        position: absolute;
+        bottom: 0;
+      }
+      
     </style>
   </head>
   <body>
+    <button type="button" name="button">Pause</button>
     <canvas id="canvas" width="300" height="300"></canvas>
+    <script src="scripts/audio.js"></script>
+    <!-- <script src="scripts/sound.js"></script> -->
+    <script src="scripts/simplex-noise.js"></script>
+    <script src="scripts/point.js"></script>
+    <script src="scripts/main.js"></script>
   </body>
 </html>
