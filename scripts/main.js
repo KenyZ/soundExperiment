@@ -1,13 +1,16 @@
 let   canvas = document.getElementById('canvas'),
       audio,
       ctx,
-      simplex = new SimplexNoise(),
-      paintdrops = [];
+      simplex       = new SimplexNoise(),
+      paintdrops    = [],
+      line,
+      splash,
+      nbPaintdrops  = 3;
 
     const color = [
-      '#fff680',
-      '#ed5e9a',
-      '#7248de'
+        '#ed5e9a',
+        '#fff680',
+        '#7248de'
     ]
 /**
  * onResize
@@ -27,8 +30,25 @@ function onResize( evt ) {
 }
 
 function addListeners() {
-    window.addEventListener( 'resize', onResize.bind(this) );
+    //window.addEventListener( 'resize', onResize.bind(this) );
     // rafId = requestAnimationFrame( frame )
+
+    let controlBtn      = document.getElementById('controlBtn');
+        muteStatus      = false;
+
+    controlBtn.addEventListener('click', function() {
+        let me          = this;
+        if (!muteStatus) {
+            audio.muteSound(true); //Mutes audio
+            muteStatus  = true; //Sets mute status to true
+            me.classList.add('mute');
+        } else {
+            audio.muteSound(false); //Unmutes audio
+            muteStatus  = false; //Sets mute status to false
+            me.classList.remove('mute');
+        }
+    })
+
 }
 
 
@@ -36,59 +56,76 @@ function updateFrame() {
 
     requestAnimationFrame( updateFrame );
 
+    //Draw a rect with transparacy to create a shadow effect
 
-    // ctx.clearRect(0,0, canvasWidth, canvasHeight);
-          ctx.fillStyle = 'rgba(13, 29, 51, 0.2)';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    let cumul = 0;
-
-    // TODO: each paintdrop worries about one specific range of frequency
+    let cumul     = 0;
+    let variation = 0;
 
     // TODO: resize
 
-    for (let i = 0; i < paintdrops.length; i++) {
+    let frequencyData = audio.getFrequency();
+    for (let k = 0; k < frequencyData.length; k++) {
+      cumul += frequencyData[k];
+    }
+
+    variation = cumul / 255;
+
+    if (variation > 350) {
+        ctx.fillStyle = 'rgba(255, 27, 82, 0.1)';
+    } else {
+        ctx.fillStyle = 'rgba(13, 29, 51, 0.1)';
+    }
+
+    for (let i = 0; i < nbPaintdrops; i++) {
 
         let paintdrop     = paintdrops[i],
-          percentIdx    = i / paintdrop.numberPoints;
-          frequencyIdx  = Math.floor(1024 * percentIdx);
+        percentIdx        = i / nbPaintdrops;
+        frequencyIdx      = Math.floor(1024 * percentIdx);
 
-        let frequencyData = audio.getFrequency();
+        variation = frequencyData[frequencyIdx] / 255;
 
-        cumul += frequencyData[frequencyIdx];
-
-        let variation = cumul / 255;
-
-        paintdrop.update(variation);
+        paintdrop.update(variation, 1);
         paintdrop.render();
-
-
-
     }
+
+    line.update(0.1, variation);
+    line.render();
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function init() {
 
     onResize();
+    addListeners();
 
     //Creates a new audio object with an url
-    audio = new Audio('sounds/sound3.mp3');
+    audio = new Audio('sounds/sound4.mp3');
     audio.loadSound();
 
     ctx = canvas.getContext('2d');
 
-    let height = 400;
-    let angle = 0;
+    let ratio         = 7,
+        distanceX     = -ratio * 2,
+        distanceY     = 0,
+        height        = 375,
+        angle         = 0,
+        angleIncrease = 0.020,
+        amplitude     = height / 3;
 
-    //Instances 3 paintdrops
-    for (let i = 0; i < 3; i++){
-      let paintdrop = new Paintdrop(height, angle, color[i]);
-      paintdrop.render();
-      paintdrops.push(paintdrop);
-      height -= 100;
-      angle   += Math.random() * (0 - 0.05);
+    //Instances 3 shapes as paintdrops
+    for (let i = 0; i < nbPaintdrops; i++) {
+
+        let paintdrop = new Shape(200, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, color[i]);
+        paintdrops.push(paintdrop);
+        height        -= 125;
+        angle         += Math.random() * (0 - 0.05);
+
     }
 
+    //Creates a new line
+    line = new Line(200, distanceX, canvasHeight / 2, 0, 0.5, 0.05, 10, 50, '#fff');
 }
 
 init();
