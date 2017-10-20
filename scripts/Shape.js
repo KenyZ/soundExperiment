@@ -1,25 +1,19 @@
 function Shape(nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, duration, color) {
     this.nbPoints         = nbPoints;
-    this.distanceX        = distanceX;
-    this.distanceY        = distanceY;
+    this.distanceX        = distanceX;        //Distance X from x = 0
+    this.distanceY        = distanceY;        //Distance Y from y = 0
     this.angle            = angle;
-    this.angleIncrease    = angleIncrease;
+    this.angleIncrease    = angleIncrease;    //For each point loop
     this.ratio            = ratio;
     this.amplitude        = amplitude;
     this.color            = color;
-    this.height           = height;
+    this.height           = height;           //Height shape
     this.points           = [];
     this.tweenCurrentTime = 0;
-    this.targetPos        = -100;
-    this.startPos         = -850;
-    this.duration         = duration;
-    this.translateY       = this.startPos;
-    this.now              = Date.now(),
-    this.lastTime         = this.now,
-    this.deltaTime        = 16;
-
+    this.targetPos        = -100;             //Target Position in Y for introAnimation
+    this.startPos         = -850;             //Start position before Y for introAnimation
+    this.duration         = duration;         //Intro animation duration
     this.createPoints();
-    this.updateIntro();
 }
 
 Shape.prototype = {
@@ -31,12 +25,12 @@ Shape.prototype = {
         }
 
         for (let i = 0; i <= this.nbPoints; i++) {
-            this.angle += this.angleIncrease;
+            this.angle  += this.angleIncrease;
 
             let point   = new Point(coords, this.angle, this.height, this.amplitude);
 
             point.render();
-            coords.x += this.ratio;
+            coords.x    += this.ratio;           //To get a gap between each points
             this.points.push(point);
         }
 
@@ -45,6 +39,7 @@ Shape.prototype = {
         ctx.save();
         ctx.translate(0, this.translateY);
         ctx.fillStyle = this.color;
+
         ctx.moveTo(this.points[0].x, 0);
 
         let futurePoint,
@@ -78,21 +73,30 @@ Shape.prototype = {
             point.render();
 
         }
-    }, updateIntro : function () {
-              this.rafId = requestAnimationFrame(this.updateIntro.bind(this));
+    },
+    twin : function() {
+        this.translateY       = this.startPos;
+        this.now              = Date.now(),
+        this.lastTime         = this.now,
+        this.deltaTime        = 16;
 
-              this.now = Date.now();
-              this.deltaTime =  this.now - this.lastTime;
-              this.lastTime = this.now;
-              this.tweenCurrentTime += this.deltaTime;
+        this.updateIntro();
+    },
+    updateIntro : function () {
+        this.rafId = requestAnimationFrame(this.updateIntro.bind(this));
 
-          if (this.tweenCurrentTime < this.duration) {
+        this.now              = Date.now();
+        this.deltaTime        =  this.now - this.lastTime;
+        this.lastTime         = this.now;
+        this.tweenCurrentTime += this.deltaTime;
 
-              this.translateY = Easing.easeInOutBack(this.tweenCurrentTime, this.startPos, this.targetPos - this.startPos, this.duration);
+        if (this.tweenCurrentTime < this.duration) {
 
-          } else {
-            cancelAnimationFrame(this.rafId);
-          }
+            this.translateY    = Easing.easeInOutBack(this.tweenCurrentTime, this.startPos, this.targetPos - this.startPos, this.duration);
+
+        } else {
+          cancelAnimationFrame(this.rafId);
+        }
   }
 
 }
@@ -111,16 +115,16 @@ function Line (nbPoints, distanceX, distanceY, height, angle, angleIncrease, rat
 
     Shape.call(this, nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, duration, color);
 
-
 }
 
 Line.prototype        = new Shape();
 
 Line.prototype.render = function() {
+
     ctx.beginPath();
     ctx.save();
     ctx.strokeStyle = this.color;
-    ctx.lineWidth = 5;
+    ctx.lineWidth   = 5;
     ctx.moveTo(this.points[0].x, this.distanceY);
 
     let futurePoint;

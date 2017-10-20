@@ -19,16 +19,17 @@ Audio.prototype = {
     //Starts XHR request
     this.request = new XMLHttpRequest();
     this.request.open('GET', this.url, true);
-    this.request.responseType = 'arraybuffer';
+    this.request.responseType   = 'arraybuffer';
+
     // Decode asynchronously
     this.request.onload = function() {
       this.audioCtx.decodeAudioData(this.request.response, function(buffer) {
 
         // success callback
-        this.audioBuffer = buffer;
+        this.audioBuffer        = buffer;
 
         // Create sound from buffer
-        this.audioSource = this.audioCtx.createBufferSource();
+        this.audioSource        = this.audioCtx.createBufferSource();
         this.audioSource.buffer = this.audioBuffer;
 
         //Connects the audioSource to the gainNode
@@ -47,22 +48,11 @@ Audio.prototype = {
     this.request.send();
   },
   getFrequency : function () {
-      this.DELTA_TIME = Date.now() - this.LAST_TIME;
-      this.LAST_TIME = Date.now();
+      this.DELTA_TIME         = Date.now() - this.LAST_TIME;
+      this.LAST_TIME          = Date.now();
 
       this.analyser.getByteFrequencyData(this.frequencyData);
 
       return this.frequencyData;
-  },
-  muteSound : function (mute) {
-
-      this.mute = mute; //Bool
-
-      if (this.mute == true) {
-          console.log('bam');
-          this.gainNode.gain.value = 0;
-      } else {
-          this.gainNode.gain.value = 1;
-      }
   }
 }
