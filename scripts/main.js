@@ -104,7 +104,7 @@ function introAnimation() {
 function init() {
 
     onResize();
-    addListeners();
+  //  addListeners();
 
     //Creates a new audio object with an url
     audio = new Audio('sounds/sound4.mp3');
@@ -112,14 +112,8 @@ function init() {
 
     ctx = canvas.getContext('2d');
 
-    let height;
-    if(canvasHeight > 900) {
-      height            = canvasHeight / 2;
-    } else {
-      height            = canvasHeight / 3;
-    }
-
     let ratio           = 7,
+        height            = canvasHeight / 1.5;
         distanceX       = -ratio * 2,
         distanceY       = 0,
         angle           = 0,

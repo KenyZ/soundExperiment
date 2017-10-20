@@ -27,7 +27,6 @@
         background-color: rgba(74, 23, 168, 0.5);
         position: absolute;
         bottom: 0;
-
       }
 
       button {
@@ -51,7 +50,6 @@
 
       p {
         position: absolute;
-        right : 5vh;
         top: 10px;
         padding: 0;
         margin: 0;
@@ -62,12 +60,42 @@
         font-size: 12px;
       }
 
+      p.right {
+        right : 4vw;
+      }
+
+      p.right::after {
+        content:"";
+        position: absolute;
+        right: -2vw;
+        top: -4px;
+        background: url('assets/volume.png');
+        background-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      p.left {
+        left : 4vw;
+      }
+
+      p.left::before {
+        content:"";
+        position: absolute;
+        left: -2vw;
+        top: -2px;
+        background: url('assets/drop.png');
+        background-size: 15px;
+        width: 15px;
+        height: 15px;
+      }
+
     </style>
   </head>
   <body>
     <div class="commands">
-      <button id="controlBtn" class="pause" type="button" name="button"></button>
-      <p>Cosmic Sand - 9h00</p>
+      <p class="left">Paintdrop Beats</p>
+      <p class="right">Cosmic Sand - 9h00</p>
     </div>
     <canvas id="canvas" width="300" height="300"></canvas>
     <script src="scripts/simplex-noise.js"></script>
