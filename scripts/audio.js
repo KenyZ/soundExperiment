@@ -59,7 +59,8 @@ Audio.prototype = {
       this.mute = mute; //Bool
 
       if (this.mute == true) {
-          this.gainNode.gain.value = 0.0;
+          console.log('bam');
+          this.gainNode.gain.value = 0;
       } else {
           this.gainNode.gain.value = 1;
       }

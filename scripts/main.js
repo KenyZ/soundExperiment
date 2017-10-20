@@ -51,7 +51,6 @@ function addListeners() {
 
 }
 
-
 function updateFrame() {
 
     requestAnimationFrame( updateFrame );
@@ -65,11 +64,13 @@ function updateFrame() {
     // TODO: resize
 
     let frequencyData = audio.getFrequency();
-    for (let k = 0; k < frequencyData.length; k++) {
+
+    for (let k = 0; k < 800; k++) {
       cumul += frequencyData[k];
     }
 
     variation = cumul / 255;
+    console.log(variation);
 
     if (variation > 350) {
         ctx.fillStyle = 'rgba(255, 27, 82, 0.1)';
@@ -77,22 +78,28 @@ function updateFrame() {
         ctx.fillStyle = 'rgba(13, 29, 51, 0.1)';
     }
 
+    let variationPaintDrop = 0;
     for (let i = 0; i < nbPaintdrops; i++) {
 
         let paintdrop     = paintdrops[i],
         percentIdx        = i / nbPaintdrops;
         frequencyIdx      = Math.floor(1024 * percentIdx);
 
-        variation = frequencyData[frequencyIdx] / 255;
+        variationPaintDrop = frequencyData[frequencyIdx] / 255;
 
-        paintdrop.update(variation, 1);
+        paintdrop.update(variationPaintDrop, 1);
         paintdrop.render();
     }
 
-    line.update(0.1, variation);
+    line.update(0.05, variation);
     line.render();
 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function introAnimation() {
+    let rafId = requestAnimationFrame( introAnimation );
+
 }
 
 function init() {
