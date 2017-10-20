@@ -1,4 +1,4 @@
-function Shape(nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, color) {
+function Shape(nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, duration, color) {
     this.nbPoints         = nbPoints;
     this.distanceX        = distanceX;
     this.distanceY        = distanceY;
@@ -9,8 +9,17 @@ function Shape(nbPoints, distanceX, distanceY, height, angle, angleIncrease, rat
     this.color            = color;
     this.height           = height;
     this.points           = [];
+    this.tweenCurrentTime = 0;
+    this.targetPos        = -100;
+    this.startPos         = -850;
+    this.duration         = duration;
+    this.translateY       = this.startPos;
+    this.now              = Date.now(),
+    this.lastTime         = this.now,
+    this.deltaTime        = 16;
 
     this.createPoints();
+    this.updateIntro();
 }
 
 Shape.prototype = {
@@ -34,6 +43,7 @@ Shape.prototype = {
     }, render : function() {
         ctx.beginPath();
         ctx.save();
+        ctx.translate(0, this.translateY);
         ctx.fillStyle = this.color;
         ctx.moveTo(this.points[0].x, 0);
 
@@ -68,11 +78,26 @@ Shape.prototype = {
             point.render();
 
         }
-    }
+    }, updateIntro : function () {
+              this.rafId = requestAnimationFrame(this.updateIntro.bind(this));
+
+              this.now = Date.now();
+              this.deltaTime =  this.now - this.lastTime;
+              this.lastTime = this.now;
+              this.tweenCurrentTime += this.deltaTime;
+
+          if (this.tweenCurrentTime < this.duration) {
+
+              this.translateY = Easing.easeInOutBack(this.tweenCurrentTime, this.startPos, this.targetPos - this.startPos, this.duration);
+
+          } else {
+            cancelAnimationFrame(this.rafId);
+          }
+  }
 
 }
 
-function Line (nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, color) {
+function Line (nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, duration, color) {
 
     this.nbPoints         = nbPoints;
     this.distanceX        = distanceX;
@@ -84,7 +109,7 @@ function Line (nbPoints, distanceX, distanceY, height, angle, angleIncrease, rat
     this.color            = color;
     this.height           = height;
 
-    Shape.call(this, nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, color);
+    Shape.call(this, nbPoints, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, duration, color);
 
 
 }

@@ -70,7 +70,6 @@ function updateFrame() {
     }
 
     variation = cumul / 255;
-    console.log(variation);
 
     if (variation > 350) {
         ctx.fillStyle = 'rgba(255, 27, 82, 0.1)';
@@ -113,26 +112,35 @@ function init() {
 
     ctx = canvas.getContext('2d');
 
-    let ratio         = 7,
-        distanceX     = -ratio * 2,
-        distanceY     = 0,
-        height        = 375,
-        angle         = 0,
-        angleIncrease = 0.020,
-        amplitude     = height / 3;
+    let height;
+    if(canvasHeight > 900) {
+      height            = canvasHeight / 2;
+    } else {
+      height            = canvasHeight / 3;
+    }
+
+    let ratio           = 7,
+        distanceX       = -ratio * 2,
+        distanceY       = 0,
+        angle           = 0,
+        angleIncrease   = 0.020,
+        amplitude       = height / 3,
+        heightDecrease  = height / 3 / 2,
+        duration        = 1000;
 
     //Instances 3 shapes as paintdrops
     for (let i = 0; i < nbPaintdrops; i++) {
 
-        let paintdrop = new Shape(200, distanceX, distanceY, height, angle, angleIncrease, ratio, amplitude, color[i]);
+        let paintdrop = new Shape(800, distanceX, distanceY, height + 50, angle, angleIncrease, ratio, amplitude, duration, color[i]);
         paintdrops.push(paintdrop);
-        height        -= 125;
+        height        -= heightDecrease;
         angle         += Math.random() * (0 - 0.05);
 
+        duration      += 1000;
     }
 
     //Creates a new line
-    line = new Line(200, distanceX, canvasHeight / 2, 0, 0.5, 0.05, 10, 50, '#fff');
+    line = new Line(800, distanceX, canvasHeight / 2, 0, 0.5, 0.05, 10, 50, duration, '#fff');
 }
 
 init();
